@@ -6,5 +6,8 @@ export class AuroraServerlessAStack extends cdk.Stack {
     super(scope, id, props);
 
     const canaryBucket = new s3.Bucket(this, "CanaryBucket");
+    const regionOutput = new cdk.CfnOutput(this, "Region", {
+      value: this.region,
+    });
   }
 }
