@@ -42,6 +42,10 @@ jobs:
       #   1. PR deployment should target the test account
       #   2. The testing (the deployment prior to prod for validation)
       #      should run in a new STAGING env
+      # Or maybe test deployment should only happen in the PR author's dev
+      # account, for all to see, and deployment shouldn't even happen on PR.
+      # PR review can involve reviewing the author's work in their dev account.
+      # By the way, what happens on push to a PR branch? What gets triggered?
       - name: Identify dev AWS account
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
@@ -50,10 +54,18 @@ jobs:
         run: |
           aws sts get-caller-identity
 
-      - name: Deploy to test
+      - name: Deploy to dev
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.DEV_AWS_DEFAULT_REGION }}
         run: |
-          npx cdk deploy
+          npx cdk bootstrap
+
+      - name: Deploy to dev
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.DEV_AWS_DEFAULT_REGION }}
+        run: |
+          npx cdk deploy --require-approval never
