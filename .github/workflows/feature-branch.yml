@@ -57,3 +57,7 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.DEV_AWS_DEFAULT_REGION }}
         run: |
           npx cdk deploy --require-approval never
+
+      - name: Test the dev deployment
+        run: |
+          echo "integration-test the dev deployment here"
